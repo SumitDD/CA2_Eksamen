@@ -2,10 +2,10 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import entities.User;
+import entitiesDTO.NewUserDTO;
 import entitiesDTO.UserDTO;
 import entitiesDTO.UsersDTO;
-import facades.FacadeExample;
+import exceptions.UserNotFoundException;
 import facades.UserFacade;
 import fetcher.CatFactFetcher;
 import java.io.IOException;
@@ -15,15 +15,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 import javax.annotation.security.RolesAllowed;
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.TypedQuery;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
@@ -59,7 +58,7 @@ public class DemoResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("personphone/{phone}")
-    public String getUserByPhone(@PathParam("phone")String phone) {
+    public String getUserByPhone(@PathParam("phone")String phone) throws UserNotFoundException {
         UserDTO user = FACADE.getUserByPhone(phone);
         return GSON.toJson(user);
         
@@ -68,7 +67,7 @@ public class DemoResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("personhobby/{hobby}")
-    public String getAllUsersByHobby(@PathParam("hobby")String hobby) {
+    public String getAllUsersByHobby(@PathParam("hobby")String hobby) throws UserNotFoundException {
         UsersDTO users = FACADE.getAllUsersByHobby(hobby);
         return GSON.toJson(users);
         
@@ -77,7 +76,7 @@ public class DemoResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("personcity/{city}")
-    public String getAllUsersByCity(@PathParam("city")String city) {
+    public String getAllUsersByCity(@PathParam("city")String city) throws UserNotFoundException {
         UsersDTO users = FACADE.getAllUsersByCity(city);
         return GSON.toJson(users);
         
@@ -85,7 +84,7 @@ public class DemoResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{hobby}")
-    public String getUserCountByhobby(@PathParam("hobby")String hobby) {
+    public String getUserCountByhobby(@PathParam("hobby")String hobby) throws UserNotFoundException {
         long count = FACADE.getUserCountByhobby(hobby);
         return GSON.toJson(count);
         
@@ -103,9 +102,9 @@ public class DemoResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("delete")
-    public Response deletePerson(String user) {
+    public Response deletePerson(String user) throws UserNotFoundException {
         UserDTO userDTO = GSON.fromJson(user, UserDTO.class); 
-        userDTO = FACADE.deletePerson(userDTO);
+        userDTO = FACADE.deleteUser(userDTO);
         return Response.ok(userDTO).build();
         
     }
@@ -175,6 +174,25 @@ public class DemoResource {
         String result = CatFactFetcher.fetchCatFactParrallel(ES, GSON);
         cachedResponse = result;
         return result;
+    }
+    
+    @Path("allusers")
+    @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    public String getAllUsers()  {
+        UsersDTO users = FACADE.getAllUsers();
+        return GSON.toJson(users);
+        
+    }
+    @Path("add")
+    @POST
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    public String addNewuser(String user) throws UserNotFoundException  {
+        NewUserDTO nuDTO = GSON.fromJson(user, NewUserDTO.class);
+        UserDTO userDTO = FACADE.addNewUser(nuDTO);
+        return GSON.toJson(userDTO);
+        
     }
     
     

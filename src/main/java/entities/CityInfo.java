@@ -24,8 +24,7 @@ public class CityInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     private String zip;
     private String city;
     
@@ -67,13 +66,11 @@ public class CityInfo implements Serializable {
         this.addresses.add(address);
     }
 
-    public Long getId() {
-        return id;
-    }
+ 
+    
+    
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+
 
     
 }
