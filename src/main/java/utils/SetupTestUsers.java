@@ -37,27 +37,28 @@ public class SetupTestUsers {
         user.setHobbies(h1);
         user.setPhone(p1);
         a1.setCityInfo(c1);
-        user.setAddress(a1);
+        user.setAddress(a1); 
         
-        
+        Address a2 = new Address("Street2");
+        admin.setAddress(a2);
+        a2.setCityInfo(c1);
         admin.setHobbies(h1);
         admin.setPhone(new Phone("12321321321"));
-        admin.setAddress(a1);
-        
-        
-        em.getTransaction().begin();
+
+        em.getTransaction().begin();       
         Role userRole = new Role("user");
         Role adminRole = new Role("admin");
+        
         user.addRole(userRole);
         admin.addRole(adminRole);
         both.addRole(userRole);
         both.addRole(adminRole);
+        
         em.persist(userRole);
-        em.persist(adminRole);
-      
+        em.persist(adminRole);   
         em.persist(user);
         em.persist(admin);
-;
+        
         em.persist(both);
         em.getTransaction().commit();
         System.out.println("PW: " + user.getUserPass());

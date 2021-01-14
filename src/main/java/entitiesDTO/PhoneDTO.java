@@ -13,7 +13,7 @@ import entities.Phone;
  */
 public class PhoneDTO {
     
-    String number;
+    public String number;
 
     public PhoneDTO(Phone phone) {
         this.number = phone.getNumber();

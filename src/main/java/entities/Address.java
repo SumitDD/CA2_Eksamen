@@ -29,7 +29,7 @@ public class Address implements Serializable {
     private Long id;
     private String street;
     
-    @OneToMany(mappedBy = "address", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "address")
     private List<User> users ;
     
     @ManyToOne(cascade = CascadeType.PERSIST)
@@ -81,7 +81,14 @@ public class Address implements Serializable {
             this.users.add(user);
         }
     }
- 
+
+    public void deleteCityInfo(CityInfo cityInfo){
+        if(cityInfo != null){  
+            cityInfo.getAddresses().remove(this);
+        }
+        this.setCityInfo(null);
+    }
+
     public Long getId() {
         return id;
     }
@@ -89,13 +96,8 @@ public class Address implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-    
-    public void deleteCityInfo(CityInfo cityInfo){
-        if(cityInfo != null){  
-            cityInfo.getAddresses().remove(this);
-        }
-        this.setCityInfo(null);
-    }
+
+   
 
 
     

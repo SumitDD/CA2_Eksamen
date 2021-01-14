@@ -32,9 +32,9 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 //Uncomment the line below, to temporarily disable this test
-//@Disabled
+@Disabled
 
-public class RenameMeResourceTest {
+public class EndpointsTest {
 
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
@@ -42,7 +42,7 @@ public class RenameMeResourceTest {
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
     private static EntityManagerFactory emf;
-    private static User admin, user, both;
+    private static User admin, user, both, sumit;
     private static Address a1, a2;
     private static CityInfo c1;
     private static Phone p1;
@@ -71,6 +71,7 @@ public class RenameMeResourceTest {
         
         user = new User("user", "testuser");
         admin = new User("admin", "testadmin");
+        sumit = new User("dey", "sumit");
         both = new User("user_admin", "testuseradmin");
         a1 = new Address("Street");
         a2 = new Address("Taastrupvej123");
@@ -92,6 +93,10 @@ public class RenameMeResourceTest {
         admin.setPhone(new Phone("12321321321"));
         admin.setAddress(a2);
         
+        sumit.setPhone(new Phone("53426321"));
+        sumit.setAddress(a1);
+        sumit.setHobbies(h1);
+      
         userRole = new Role("user");
         adminRole = new Role("admin");
         user.addRole(userRole);
@@ -115,6 +120,7 @@ public class RenameMeResourceTest {
         em.persist(user);
         em.persist(admin);
         em.persist(both);
+        em.persist(sumit);
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -229,8 +235,22 @@ public class RenameMeResourceTest {
         
     }
     
+    @Test
+    public void testAddNewUser() {
+        EntityManagerFactory emf = EMF_Creator.createEntityManagerFactoryForTest();
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        em.persist(sumit);
+        em.getTransaction().commit();
+     
+            given()
+                .contentType("application/json")
+                .body(new UserDTO(sumit))
+                .when()
+                .post("/info/add/")
+                .then();
+        
+    }
     
 
-    
-    
 }
